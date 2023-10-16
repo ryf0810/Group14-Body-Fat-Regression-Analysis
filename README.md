@@ -2,7 +2,7 @@
 
 This is Group 14's regression analysis on predicting human bodyfat percentage. <br />
 
-Replicate the analysis: put the analysis.R and BodyFat.csv (raw data) under the same folder. 
+Replicate the analysis: put the model.R and BodyFat.csv (raw data) under the same folder. 
 
 **Data folder**: Containing raw and cleaned data (outliers removed).<br />
 **Code folder**: Containing analysis code, including data cleaning, figures generation and shiny app.<br />
