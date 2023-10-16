@@ -20,6 +20,7 @@ x <- data[,3:16]
 x <- scale(x)
 x <- as.matrix(x)
 #lasso regression
+set.seeds(1)
 model.cv1 <- cv.glmnet(x,y,family="gaussian", alpha=1)
 best_lambda1 <- model.cv1$lambda.1se
 fit1 <- glmnet(x,y,alpha = 1,lambda = best_lambda1)
@@ -33,24 +34,21 @@ fit2 <- glmnet(x,y,alpha = 0,lambda = best_lambda2)
 coef_ridge <- coef(fit2,s = best_lambda2)
 y_hat_ridge <- predict(fit2,newx = x,s = best_lambda2)
 plot(model.cv2)
-#model evaluation
-plot(y, y_hat_lasso, main = "Fitted Line Plot of y vs.y_lasso", xlab = "y", ylab = "y_hat", col = "black")
-abline(lm(y_hat_lasso ~ y), col = "red") 
-plot(y, y_hat_ridge, main = "Fitted Line Plot of y vs.y_ridge", xlab = "y", ylab = "y_hat", col = "black")
-abline(lm(y_hat_ridge ~ y), col = "red")
 
-residuals_lasso <- y - y_hat_lasso
-plot(y_hat_lasso, residuals_lasso, main = "Residual Plot", xlab = "lasso_predict", ylab = "Residuals")
-abline(h = 0, col = "red")
-residuals_ridge <- y - y_hat_ridge
-plot(y_hat_ridge, residuals_ridge, main = "Residual Plot", xlab = "ridge_predict", ylab = "Residuals")
-abline(h = 0, col = "red")
-
+#Calculate R^2
 rsquared_lasso <- 1 - (sum((y - y_hat_lasso)^2) / sum((y - mean(y))^2))
 rsquared_ridge <- 1 - (sum((y - y_hat_ridge)^2) / sum((y - mean(y))^2))
 print(rsquared_lasso)
 print(rsquared_ridge)
 
+#####95%  prediction interval####
+se <- sqrt(model.cv1$cvm[model.cv1$lambda == best_lambda1] / nrow(data1))
+alpha <- 0.05
+t_quantile <- qt(1 - alpha / 2, df = nrow(data1) - 4 -1)
+lower_limit <- y_hat_lasso - t_quantile * se
+upper_limit <- y_hat_lasso + t_quantile * se
+lower_limit
+upper_limit
 
 #mulitple linear
 vif.val <- faraway::vif(data[2:dim(data)[2]])
