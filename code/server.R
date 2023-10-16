@@ -24,7 +24,7 @@ server <- function(input, output) {
       height <- (height - mean(data$HEIGHT))/sd(data$HEIGHT)
       abdomen <- (abdomen - mean(data$ABDOMEN))/sd(data$ABDOMEN)
       wrist <- (wrist - mean(data$WRIST))/sd(data$WRIST)
-      bodyfat_per <- (18.8971429 + 0.2237683*age - 0.6684841*height + 6.2077191*abdomen -0.4217869*wrist)
+      bodyfat_per <- (18.8971429 + 0.2633502*age -0.6780748*height + 6.3043124*abdomen-0.5269030*wrist)
       output$bodyfat_result <- renderText({
         paste0('Your Body Fat Percentage is: ', round(bodyfat_per, 2), '%')
       })
@@ -45,7 +45,7 @@ server <- function(input, output) {
       height_normalize <- (height - mean(data$HEIGHT))/sd(data$HEIGHT)
       abdomen_normalize <- (abdomen - mean(data$ABDOMEN))/sd(data$ABDOMEN)
       wrist_normalize <- (wrist - mean(data$WRIST))/sd(data$WRIST)
-      bodyfat_per <- (18.8971429 + 0.2237683*age_normalize - 0.6684841*height_normalize + 6.2077191*abdomen_normalize - 0.4217869*wrist_normalize)
+      bodyfat_per <- (18.8971429 + 0.2633502*age_normalize - 0.6780748*height_normalize + 6.3043124*abdomen_normalize - 0.5269030*wrist_normalize)
       
       hist(data[[feature]], main = paste0('Histogram of ', feature), xlim=c(round(min(data[[feature]])), round(max(data[[feature]]))))
       if (feature == 'BODYFAT') {
