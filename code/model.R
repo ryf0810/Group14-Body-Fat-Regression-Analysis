@@ -1,4 +1,4 @@
-
+# Feature Part
 rm(list = ls())
 
 data <- read.csv(file = "~/Downloads/BodyFat.csv")
@@ -8,7 +8,7 @@ subset_data <- data[, c(1, 3:5)]
 boxplot(data, outline=TRUE,main="Box plot of Raw Data with Outliers")
 
 
-
+# Model part
 library(glmnet)
 library(car)
 library(tidyverse)
@@ -62,7 +62,8 @@ print(rsquared_lasso)
 print(rsquared_ridge)
 
 
-#mulitple linear
+# OLS
+# Choose features based on VIF, < 5
 vif.val <- faraway::vif(data[2:dim(data)[2]])
 df.vif <- data.frame(Features = names(vif.val), VIF = as.vector(vif.val))
 df.vif
@@ -81,8 +82,8 @@ df.vif[which(df.vif$VIF < 3), ]
 # for selected features: age, height, ankle, forearm
 boxplot(data[,c('AGE', 'HEIGHT', 'ANKLE', 'FOREARM')])
 
-ml <- lm(BODYFAT ~ WEIGHT + HEIGHT + ANKLE + FOREARM, data = data)
-summary(ml) # Four predictors are statistically significant, and F-statistics is
+OLS <- lm(BODYFAT ~ WEIGHT + HEIGHT + ANKLE + FOREARM, data = data)
+summary(OLS) # Four predictors are statistically significant, and F-statistics is
 
 #Statistic Tests
 
@@ -92,7 +93,7 @@ rsquared_ridge <- 1 - (sum((y - y_hat_ridge)^2) / sum((y - mean(y))^2))
 print(rsquared_lasso)
 print(rsquared_ridge)
 
-summary(ml)$r.squared
+summary(OLS)$r.squared
 
 #calculate MSE
 
@@ -105,9 +106,9 @@ print(mse_lm)
 print(mse_lasso)
 print(mse_ridge)
 
-residuals <- ml$residuals
-MSE_ml <- mean(residuals^2)
-MSE_ml
+residuals <- OLS$residuals
+MSE_OLS <- mean(residuals^2)
+MSE_OLS
 
 # calculate AIC
 #For original vif_model
@@ -126,8 +127,8 @@ k_ridge <- sum(coef_ridge != 0)
 pseudo_AIC_ridge <- length(y) * log(RSS_ridge/length(y)) + 2*k_ridge
 print(pseudo_AIC_ridge)
 
-#AIC for ml
-AIC(ml)
+#AIC for OLS
+AIC(OLS)
 
 #calculate BIC for vif_model
 bic_vif_model <- BIC(vif_model)
@@ -146,16 +147,16 @@ k_ridge <- length(coef_ridge) # Since Ridge doesn't shrink coefficients to zero
 bic_ridge <- n * log(rss_ridge/n) + k_ridge * log(n)
 print(bic_ridge)
 
-# BIC for ml
-BIC(ml)
+# BIC for OLS
+BIC(OLS)
 
 
 # Compare graph 
 categories <- c("MSE", "AIC", "BIC")
-MSE <- c(log(mse_lasso), log(mse_ridge), log(MSE_ml))
-AIC <- c(log(pseudo_AIC_lasso), log(pseudo_AIC_ridge), log(AIC(ml)))
-BIC <- c(log(bic_lasso), log(bic_ridge), log(BIC(ml)))
-model_kind <- c("lasso", "ridge", "ml")
+MSE <- c(log(mse_lasso), log(mse_ridge), log(MSE_OLS))
+AIC <- c(log(pseudo_AIC_lasso), log(pseudo_AIC_ridge), log(AIC(OLS)))
+BIC <- c(log(bic_lasso), log(bic_ridge), log(BIC(OLS)))
+model_kind <- c("Lasso", "Ridge", "OLS")
 
 df <- data.frame(categories, MSE, AIC, BIC)
 
